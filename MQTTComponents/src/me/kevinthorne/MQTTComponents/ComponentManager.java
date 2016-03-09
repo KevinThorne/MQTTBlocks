@@ -1,24 +1,20 @@
 package me.kevinthorne.MQTTComponents;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import me.kevinthorne.MQTTComponents.components.AutoRefreshComponent;
+import me.kevinthorne.MQTTComponents.components.ComponentLoader;
 import me.kevinthorne.MQTTComponents.components.ComponentConfigurationFile;
 import me.kevinthorne.MQTTComponents.components.MQTTComponent;
 
@@ -29,6 +25,7 @@ public class ComponentManager extends Thread {
   public static final File componentLocation = new File("components/");
 
   private Map<String, MQTTComponent> components = new HashMap<>();
+  // private Map<String, Future> enabledComponents = new HashMap<>();
 
   public ComponentManager() {
     logger.setUseParentHandlers(false);
@@ -40,10 +37,10 @@ public class ComponentManager extends Thread {
     logger.info("Logger setup successful");
 
     loadComponents();
-    logger.info(components.size() + " components successfully added");
+    logger.info(components.size() + " core component(s) successfully added");
 
     enableComponents();
-    logger.info(components.size() + " components successfully enabled");
+    logger.info(components.size() + " core component(s) successfully enabled");
 
 
     Runtime.getRuntime().addShutdownHook(this);
@@ -54,6 +51,7 @@ public class ComponentManager extends Thread {
    */
   public void run() {
     logger.info("Shutdown initiated");
+    disableComponents();
     removeComponents();
     logger.info("Halted.");
   }
@@ -87,7 +85,7 @@ public class ComponentManager extends Thread {
 
   public void enableComponent(String name) {
     try {
-      components.get(name).onEnable();
+      components.get(name).start();
     } catch (Exception e) {
       logger.severe("Component: " + name + " could not be enabled, removing.");
       e.printStackTrace();
@@ -96,7 +94,7 @@ public class ComponentManager extends Thread {
 
   public void disableComponent(String name) {
     try {
-      components.get(name).onDisable();
+      components.get(name).interrupt();
     } catch (Exception e) {
       logger.severe("Component: " + name + " could not be disabled, removing.");
       e.printStackTrace();
@@ -105,7 +103,6 @@ public class ComponentManager extends Thread {
 
   public void removeComponent(String name) {
     try {
-      components.get(name).destroy();
       components.remove(name);
     } catch (Exception ignored) {
 
@@ -120,9 +117,9 @@ public class ComponentManager extends Thread {
   public void loadComponents() {
     if (!componentLocation.exists())
       componentLocation.mkdirs();
-    
-    addComponent(new ComponentConfigurationFile("AutoRefreshComponent", null, null, null, 2, null, null), 
-        new AutoRefreshComponent());
+
+    addComponent(new ComponentConfigurationFile("ComponentLoader", null, null, null, 2, null, null,
+        null, null), new ComponentLoader());
   }
 
 
@@ -143,12 +140,20 @@ public class ComponentManager extends Thread {
     logger.warning("[" + source.getComponentName() + "] - " + log);
   }
 
+  public static void logConfig(MQTTComponent source, String log) {
+    logger.config("[" + source.getComponentName() + "] - " + log);
+  }
+
   public Logger getLogger() {
     return logger;
   }
 
   public Map<String, MQTTComponent> getComponents() {
     return components;
+  }
+
+  public Thread getHeartThread() {
+    return Thread.currentThread();
   }
 
   public static class MQTTManagerFormatter extends Formatter {
