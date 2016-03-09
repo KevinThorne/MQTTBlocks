@@ -188,7 +188,10 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
       int qos, boolean isDuplicate, boolean isRetained, boolean fromHome);
 
   @Override
-  public void connectionLost(Throwable arg0) {
+  public void connectionLost(Throwable cause) {
+    logError("Connection Lost!");
+    cause.printStackTrace();
+    this.interrupt();
   }
 
   @Override
