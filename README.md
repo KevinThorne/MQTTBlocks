@@ -1,4 +1,4 @@
-# MQTTComponents
+# MQTTBlocks
 ###### A Light Java Client Daemon for MQTT communication
 
 ## Purpose
