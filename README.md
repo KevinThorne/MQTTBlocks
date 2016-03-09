@@ -79,11 +79,11 @@ Here's what each of them do and when they are ran:
 - ```update``` - Called every x seconds where x is the ```updateWait``` setting.
 - ```onMessageReceived``` - Called every time a message is received on any of the subscribed topics (both set in the configuration and any you subscribe to in onEnable or anywhere else.
 
-There are a couple of other methods that the MQTTComponent class implements, most of which can be overridden in your code:
+There are a couple of other methods that the [MQTTComponent](https://github.com/KevinThorne/MQTTBlocks/blob/master/MQTTBlocks/src/me/kevinthorne/MQTTBlocks/components/MQTTComponent.java) class implements, most of which can be overridden in your code:
 - ```publish(String topic, String message)``` - This will publish any given message to any given topic to the broker.
 - ```init(ComponentManager parent, ComponentConfigurationFile config)``` - Component Loader calls this to initialize the class. **Do not override**
 - ```run()``` - This is the lifeline of each component. **Do not override either.** Doing so will kill your component's lifecycle and potentially the entire application.
-- The ```MqttCallback``` are also implemented in the ```MQTTComponent``` class:
+- The ```MqttCallback``` are also implemented in the [```MQTTComponent```](https://github.com/KevinThorne/MQTTBlocks/blob/master/MQTTBlocks/src/me/kevinthorne/MQTTBlocks/components/MQTTComponent.java) class:
   - ```messageArrived(String topic, MqttMessage message)``` - This is the parent method of ```onMessageReceived```. This is really what the MqttClient object calls when a message is received. However, further knowledge of Eclipse Paho is needed.
   - ```connectionLost(Throwable cause)``` - Closes down the component by default.
   - ```deliveryComplete(IMqttDeliveryToken token)``` - Empty by default.
