@@ -80,19 +80,14 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
   /**
    * Component lifecycle
    * <ul>
-   * <li>Run onEnable</li>
    * <li>Setup MqttClient Object</li>
+   * <li>Run onEnable</li>
    * <li>Update loop</li>
    * <li>--------------</li>
    * <li>onDisable called on <strong>interrupt</strong>
    * </ul>
    */
   public void run() {
-    try {
-      onEnable();
-    } catch (Exception e1) {
-      e1.printStackTrace();
-    }
     try {
       client = new MqttClient(broker, clientId, persistence);
       MqttConnectOptions connOpts = new MqttConnectOptions();
@@ -116,6 +111,11 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
         e1.printStackTrace();
       }
       return;
+    }
+    try {
+      onEnable();
+    } catch (Exception e1) {
+      e1.printStackTrace();
     }
     while (running) {
       update();
