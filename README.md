@@ -73,6 +73,7 @@ public class TestComponent extends MQTTComponent {
   }
 }
 ```
+###### Component Class API
 Here's what each of them do and when they are ran:
 - ```onEnable``` - called when the component is enabled by the Component Manager. The MqttClient is instantiated by this point; any more customization of the Client object can be made here safely.
 - ```onDisable``` - do any cleanup here.
