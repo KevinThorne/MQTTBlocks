@@ -93,4 +93,5 @@ Here are a couple of helper methods:
 - ```logError(String message), logInfo(String message), logWarn(String message), logConfig(String message)``` - Logs to the main Component Manager with formatting.
 - ```interrupt()``` - Tears down component and interrupts the thread.
 
+## Development
 
