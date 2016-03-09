@@ -1,4 +1,4 @@
-package me.kevinthorne.MQTTComponents.components;
+package me.kevinthorne.MQTTBlocks.components;
 
 import java.io.IOException;
 import java.io.InputStream;

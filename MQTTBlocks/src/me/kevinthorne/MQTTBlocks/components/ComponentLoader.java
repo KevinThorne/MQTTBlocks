@@ -1,14 +1,13 @@
-package me.kevinthorne.MQTTComponents.components;
+package me.kevinthorne.MQTTBlocks.components;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Date;
-import java.util.concurrent.Executors;
 import java.util.jar.JarFile;
 
-import me.kevinthorne.MQTTComponents.ComponentManager;
+import me.kevinthorne.MQTTBlocks.ComponentManager;
 
 public class ComponentLoader extends MQTTComponent {
 

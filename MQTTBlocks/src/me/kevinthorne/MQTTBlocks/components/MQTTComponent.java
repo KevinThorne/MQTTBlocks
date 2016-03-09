@@ -1,4 +1,4 @@
-package me.kevinthorne.MQTTComponents.components;
+package me.kevinthorne.MQTTBlocks.components;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import me.kevinthorne.MQTTComponents.ComponentManager;
+import me.kevinthorne.MQTTBlocks.ComponentManager;
 
 public abstract class MQTTComponent extends Thread implements MqttCallback {
 
@@ -43,12 +43,12 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
     try {
       client.disconnect();
       client.close();
-    } catch (MqttException e) {
+    } catch (Exception e) {
       logWarn("Could not close client gracefully, using force...");
       try {
         client.disconnectForcibly();
         client.close();
-      } catch (MqttException ignored) {
+      } catch (Exception ignored) {
       }
       logWarn("Stack Trace for forced connection close:");
       e.printStackTrace();

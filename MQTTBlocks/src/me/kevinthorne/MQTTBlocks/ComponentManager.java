@@ -1,4 +1,4 @@
-package me.kevinthorne.MQTTComponents;
+package me.kevinthorne.MQTTBlocks;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,9 +14,9 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import me.kevinthorne.MQTTComponents.components.ComponentConfigurationFile;
-import me.kevinthorne.MQTTComponents.components.ComponentLoader;
-import me.kevinthorne.MQTTComponents.components.MQTTComponent;
+import me.kevinthorne.MQTTBlocks.components.ComponentConfigurationFile;
+import me.kevinthorne.MQTTBlocks.components.ComponentLoader;
+import me.kevinthorne.MQTTBlocks.components.MQTTComponent;
 
 public class ComponentManager extends Thread {
 
@@ -35,7 +35,7 @@ public class ComponentManager extends Thread {
     Formatter formatter = new ComponentLogFormatter();
     ConsoleHandler handler = new ConsoleHandler();
     try {
-      Handler fileHandler = new FileHandler("MQTTComponents.log");
+      Handler fileHandler = new FileHandler("MQTTBlocks.log");
       handler.setFormatter(formatter);
       logger.addHandler(fileHandler);
     } catch (SecurityException | IOException e) {
