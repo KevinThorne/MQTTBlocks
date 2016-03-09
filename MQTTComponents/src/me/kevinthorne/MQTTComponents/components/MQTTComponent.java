@@ -1,5 +1,7 @@
 package me.kevinthorne.MQTTComponents.components;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -20,19 +22,20 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
   protected ComponentConfigurationFile config;
   protected String name;
 
-  private String topic;
+  private String[] topics;
   private int qos = 1;
   private String broker;
   private String clientId;
   private MemoryPersistence persistence = new MemoryPersistence();
 
   private MqttClient client;
-  
+
   private boolean running;
+
+  private Map<String, MqttMessage> lastPublished = new HashMap<String, MqttMessage>();
 
   @Override
   public void interrupt() {
-    stopUpdate();
     try {
       onDisable();
     } catch (Exception ignored) {
@@ -41,12 +44,13 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
       client.disconnect();
       client.close();
     } catch (MqttException e) {
+      logWarn("Could not close client gracefully, using force...");
       try {
         client.disconnectForcibly();
         client.close();
       } catch (MqttException ignored) {
       }
-
+      logWarn("Stack Trace for forced connection close:");
       e.printStackTrace();
     }
 
@@ -58,7 +62,7 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
     this.parent = parent;
 
     this.name = config.getName();
-    this.topic = config.getTopic();
+    this.topics = config.getTopics();
     this.broker = config.getBroker();
     this.clientId = config.getClientId();
   }
@@ -75,6 +79,13 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
 
   /**
    * Component lifecycle
+   * <ul>
+   * <li>Run onEnable</li>
+   * <li>Setup MqttClient Object</li>
+   * <li>Update loop</li>
+   * <li>--------------</li>
+   * <li>onDisable called on <strong>interrupt</strong>
+   * </ul>
    */
   public void run() {
     try {
@@ -86,20 +97,21 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
       client = new MqttClient(broker, clientId, persistence);
       MqttConnectOptions connOpts = new MqttConnectOptions();
       connOpts.setCleanSession(true);
-      if(config.getUsername() != null && !config.getUsername().equals(""))
+      if (config.getUsername() != null && !config.getUsername().equals(""))
         connOpts.setUserName(config.getUsername());
-      if(config.getPassword() != null && !config.getPassword().equals(""))
+      if (config.getPassword() != null && !config.getPassword().equals(""))
         connOpts.setPassword(config.getPassword());
       client.connect(connOpts);
-      client.subscribe(getTopic());
+      for (String topic : getTopics()) {
+        client.subscribe(topic);
+      }
       client.setCallback(this);
       running = true;
     } catch (MqttException | IllegalArgumentException e) {
       ComponentManager.logError(this, "Fatal Error! Could not setup MQTT Client:");
       e.printStackTrace();
       try {
-        stopUpdate();
-        onDisable();
+        this.interrupt();
       } catch (Exception e1) {
         e1.printStackTrace();
       }
@@ -108,16 +120,9 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
     while (running) {
       update();
       try {
-        Thread.sleep(getSleepTime()*1000);
+        Thread.sleep(getSleepTime() * 1000);
       } catch (InterruptedException ignored) {
       }
-    }
-
-    try {
-      stopUpdate();
-      onDisable();
-    } catch (Exception e) {
-      e.printStackTrace();
     }
   }
 
@@ -126,12 +131,19 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
    */
   public abstract void update();
 
-  public void publish(String content) {
+  /**
+   * Helper method for ease of publishing to a topic
+   * 
+   * @param topic
+   * @param content
+   */
+  public void publish(String topic, String content) {
     if (client != null && client.isConnected()) {
       MqttMessage message = new MqttMessage(content.getBytes());
       message.setQos(getQos());
       try {
-        client.publish(getTopic(), message);
+        lastPublished.put(topic, message);
+        client.publish(topic, message);
       } catch (MqttException e) {
         ComponentManager.logError(this,
             "Couldn't publish message on Thread: " + getComponentName());
@@ -140,14 +152,22 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
     }
   }
 
+  /**
+   * The actual MqttClient callback function, can be overridden.
+   * 
+   * @param topic
+   * @param message - MqttMessage type
+   */
   @Override
   public void messageArrived(String topic, MqttMessage message) throws Exception {
+    boolean fromHome = false;
+    if (lastPublished.containsKey(topic)
+        && lastPublished.get(topic).toString().equals(message.toString())) {
+      fromHome = true;
+      lastPublished.remove(topic);
+    }
     onMessageReceived(topic, message, message.toString(), message.getQos(), message.isDuplicate(),
-        message.isRetained());
-  }
-
-  public void stopUpdate() {
-    running = false;
+        message.isRetained(), fromHome);
   }
 
 
@@ -160,21 +180,19 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
    * @param QoS
    * @param isDuplicate
    * @param isRetained
+   * @param fromHome
    * 
    * @return message handled
    */
-  public abstract boolean onMessageReceived(String topic, Object mqttMessage, String message, int qos,
-      boolean isDuplicate, boolean isRetained);
+  public abstract boolean onMessageReceived(String topic, Object mqttMessage, String message,
+      int qos, boolean isDuplicate, boolean isRetained, boolean fromHome);
 
   @Override
   public void connectionLost(Throwable arg0) {
-    // TODO Auto-generated method stub
-
   }
 
   @Override
   public void deliveryComplete(IMqttDeliveryToken arg0) {
-    // TODO Auto-generated method stub
   }
 
   public ComponentManager getParent() {
@@ -189,8 +207,8 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
     return name;
   }
 
-  public String getTopic() {
-    return topic;
+  public String[] getTopics() {
+    return topics;
   }
 
   public String getBroker() {
@@ -212,7 +230,7 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
   public MemoryPersistence getPersistence() {
     return persistence;
   }
-  
+
   public MqttClient getClient() {
     return client;
   }
@@ -220,13 +238,14 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
   /**
    * Return how often to call update();
    * 
-   * @return int seconds
+   * @return int <strong>seconds</strong>
    */
   public abstract int getSleepTime();
 
   public boolean isRunning() {
     return running;
   }
+
   protected void setRunning(boolean given) {
     running = given;
   }

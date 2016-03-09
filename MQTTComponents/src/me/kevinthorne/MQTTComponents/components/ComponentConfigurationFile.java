@@ -9,7 +9,7 @@ public class ComponentConfigurationFile {
   private String name;
   private String description;
   private String main;
-  private String topic;
+  private String[] topics;
   private int qos = 1;
   private String broker;
   private String username;
@@ -40,11 +40,11 @@ public class ComponentConfigurationFile {
    * @param broker
    * @param clientId
    */
-  public ComponentConfigurationFile(String name, String description, String main, String topic, int qos, String broker, String username, String password, String clientId) {
+  public ComponentConfigurationFile(String name, String description, String main, String[] topics, int qos, String broker, String username, String password, String clientId) {
     this.name = name;
     this.description = description;
     this.main = main;
-    this.topic = topic;
+    this.topics = topics;
     this.qos = qos;
     this.broker = broker;
     this.username = username;
@@ -56,7 +56,7 @@ public class ComponentConfigurationFile {
     this.name = prop.getProperty("name");
     this.description = prop.getProperty("description");
     this.main = prop.getProperty("main");
-    this.topic = prop.getProperty("topic");
+    this.topics = prop.getProperty("topic").replace(" ", "").split(",");
     this.qos = Integer.parseInt(prop.getProperty("qos"));
     this.broker = prop.getProperty("broker");
     this.username = prop.getProperty("username", "");
@@ -76,8 +76,8 @@ public class ComponentConfigurationFile {
     return main;
   }
   
-  public String getTopic() {
-    return topic;
+  public String[] getTopics() {
+    return topics;
   }
 
   public int getQos() {

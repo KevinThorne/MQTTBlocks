@@ -76,10 +76,10 @@ public class ComponentLoader extends MQTTComponent {
           try {
             jarClass = Class.forName(config.getMain(), true, cl);
           } catch (ClassNotFoundException ex) {
-            logError("Couldn't find main for " + jar.getName());
+            logError("Couldn't find main for " + jar.getName() + " reload");
             continue;
           } catch (NullPointerException ne) {
-            logError("Couldn't find main for " + jar.getName());
+            logError("Couldn't find main for " + jar.getName() + " reload");
             logError("\tconfig Main Method: " + config.getMain());
             logError("\tClass Loader: " + cl);
             continue;
@@ -94,15 +94,15 @@ public class ComponentLoader extends MQTTComponent {
           }
           // System.out.println("Instantiating and registering");
           try {
+            if (getParent().getComponents().containsKey(config.getName())) {
+              // System.out.println("Removing Old Component...");
+              getParent().disableComponent(config.getName());
+              getParent().removeComponent(config.getName());
+            }
             // System.out.print("Instantiating...");
             MQTTComponent comp = componentClass.newInstance();
             // System.out.println(" Done");
             // System.out.println("Registering...");
-            if (getParent().getComponents().containsKey(config.getName())) {
-              // System.out.println("Removing Old Component...");
-              getParent().removeComponent(config.getName());
-            }
-            // System.out.println("Adding...");
             getParent().addComponent(config, comp);
             getParent().enableComponent(config.getName());
             logInfo("Enabled new component " + config.getName());
@@ -127,7 +127,7 @@ public class ComponentLoader extends MQTTComponent {
 
   @Override
   public boolean onMessageReceived(String topic, Object mqttMessage, String message, int qos,
-      boolean isDuplicate, boolean isRetained) {
+      boolean isDuplicate, boolean isRetained, boolean fromHome) {
     return true;
   }
 

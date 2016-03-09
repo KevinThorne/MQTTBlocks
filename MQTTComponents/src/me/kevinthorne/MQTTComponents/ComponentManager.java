@@ -1,21 +1,21 @@
 package me.kevinthorne.MQTTComponents;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import me.kevinthorne.MQTTComponents.components.ComponentLoader;
 import me.kevinthorne.MQTTComponents.components.ComponentConfigurationFile;
+import me.kevinthorne.MQTTComponents.components.ComponentLoader;
 import me.kevinthorne.MQTTComponents.components.MQTTComponent;
 
 public class ComponentManager extends Thread {
@@ -28,10 +28,19 @@ public class ComponentManager extends Thread {
   // private Map<String, Future> enabledComponents = new HashMap<>();
 
   public ComponentManager() {
+    logger.info("Building runtime...");
+    
     logger.setUseParentHandlers(false);
 
-    MQTTManagerFormatter formatter = new MQTTManagerFormatter();
+    Formatter formatter = new ComponentLogFormatter();
     ConsoleHandler handler = new ConsoleHandler();
+    try {
+      Handler fileHandler = new FileHandler("MQTTComponents.log");
+      handler.setFormatter(formatter);
+      logger.addHandler(fileHandler);
+    } catch (SecurityException | IOException e) {
+      e.printStackTrace();
+    }
     handler.setFormatter(formatter);
     logger.addHandler(handler);
     logger.info("Logger setup successful");
@@ -42,12 +51,13 @@ public class ComponentManager extends Thread {
     enableComponents();
     logger.info(components.size() + " core component(s) successfully enabled");
 
-
     Runtime.getRuntime().addShutdownHook(this);
+    
+    logger.info("Component Manager started successfully");
   }
 
   /**
-   * On shutdown event
+   * OnShutdown event
    */
   public void run() {
     logger.info("Shutdown initiated");
@@ -152,11 +162,7 @@ public class ComponentManager extends Thread {
     return components;
   }
 
-  public Thread getHeartThread() {
-    return Thread.currentThread();
-  }
-
-  public static class MQTTManagerFormatter extends Formatter {
+  public static class ComponentLogFormatter extends Formatter {
     //
     // Create a DateFormat to format the logger timestamp.
     //
