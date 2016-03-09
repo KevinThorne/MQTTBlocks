@@ -93,5 +93,22 @@ Here are a couple of helper methods:
 - ```logError(String message), logInfo(String message), logWarn(String message), logConfig(String message)``` - Logs to the main Component Manager with formatting.
 - ```interrupt()``` - Tears down component and interrupts the thread.
 
-## Development
+## Download
+Developing Components are quite easy. Soon, all you will have to do is import Paho and MQTTBlocks in your buildpath. 
 
+*Note: When MQTTBlocks reaches it's first release, a JAR file wil be available. Soon after, it will be a part of the Maven Central Repo.*
+
+Maven:
+```
+<dependency>
+	<groupId>org.eclipse.paho</groupId>
+	<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+	<version>1.0.2</version>
+</dependency>
+```
+## Developing
+As seen above, just extend [```MQTTComponent```](https://github.com/KevinThorne/MQTTBlocks/blob/master/MQTTBlocks/src/me/kevinthorne/MQTTBlocks/components/MQTTComponent.java).
+
+```public class MyComponent extends MQTTComponent {```
+
+Then build your configuration file pointing to the class.
