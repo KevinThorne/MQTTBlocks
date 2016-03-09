@@ -15,6 +15,7 @@ public class ComponentConfigurationFile {
   private String username;
   private char[] password;
   private String clientId;
+  private int updateWait;
   
   /**
    * Loads Configuration File from Jar Entry InputStream
@@ -40,7 +41,7 @@ public class ComponentConfigurationFile {
    * @param broker
    * @param clientId
    */
-  public ComponentConfigurationFile(String name, String description, String main, String[] topics, int qos, String broker, String username, String password, String clientId) {
+  public ComponentConfigurationFile(String name, String description, String main, String[] topics, int qos, String broker, String username, String password, String clientId, int updateWait) {
     this.name = name;
     this.description = description;
     this.main = main;
@@ -50,6 +51,7 @@ public class ComponentConfigurationFile {
     this.username = username;
     this.password = (password == null ? "".toCharArray() : password.toCharArray());
     this.clientId = clientId;
+    this.updateWait = updateWait;
   }
   
   private void load(Properties prop) {
@@ -62,6 +64,7 @@ public class ComponentConfigurationFile {
     this.username = prop.getProperty("username", "");
     this.password = prop.getProperty("password", "").toCharArray();
     this.clientId = prop.getProperty("clientId");
+    this.updateWait = Integer.parseInt(prop.getProperty("updateWait"));
   }
 
   public String getName() {
@@ -98,6 +101,10 @@ public class ComponentConfigurationFile {
 
   public char[] getPassword() {
     return password;
+  }
+
+  public int getUpdateWait() {
+    return updateWait;
   }
 
 }

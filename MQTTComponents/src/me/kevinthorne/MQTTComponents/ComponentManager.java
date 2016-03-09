@@ -129,7 +129,7 @@ public class ComponentManager extends Thread {
       componentLocation.mkdirs();
 
     addComponent(new ComponentConfigurationFile("ComponentLoader", null, null, null, 2, null, null,
-        null, null), new ComponentLoader());
+        null, null, 10), new ComponentLoader());
   }
 
 

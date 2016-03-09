@@ -240,7 +240,9 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
    * 
    * @return int <strong>seconds</strong>
    */
-  public abstract int getSleepTime();
+  public int getSleepTime() {
+    return config.getUpdateWait();
+  }
 
   public boolean isRunning() {
     return running;
