@@ -22,7 +22,7 @@ public class ComponentManager extends Thread {
 
   private static Logger logger = Logger.getLogger(ComponentManager.class.getName());
 
-  public static final File componentLocation = new File("components/");
+  public static final File componentLocation = new File("blocks/");
 
   private Map<String, MQTTComponent> components = new HashMap<>();
   // private Map<String, Future> enabledComponents = new HashMap<>();

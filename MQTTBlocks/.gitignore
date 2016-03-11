@@ -3,3 +3,5 @@
 /target/
 /MQTTBlocks.log
 /MQTTBlocks.log.lck
+/components/
+/blocks/
