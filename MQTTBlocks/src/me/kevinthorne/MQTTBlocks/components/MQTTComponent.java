@@ -97,7 +97,7 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
       if (config.getPassword() != null && !config.getPassword().equals(""))
         connOpts.setPassword(config.getPassword());
       client.connect(connOpts);
-      for (String topic : getTopics()) {
+      for (String topic : config.getSubscribedTopics()) {
         client.subscribe(topic);
       }
       client.setCallback(this);
