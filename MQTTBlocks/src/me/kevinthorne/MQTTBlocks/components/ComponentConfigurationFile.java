@@ -81,9 +81,10 @@ public class ComponentConfigurationFile {
     ArrayList<String> subscribeOnly = new ArrayList<String>();
     ArrayList<String> publishOnly = new ArrayList<String>();
     for (String topic : topics) {
-      if (topic.contains(NO_SUB))
+      if (topic.contains(NO_SUB)) {
+        topic.replace(NO_SUB, "");
         publishOnly.add(topic);
-      else
+      } else
         subscribeOnly.add(topic);
     }
     this.subscribedTopics = subscribeOnly.toArray(subscribedTopics);
