@@ -9,7 +9,7 @@ import java.util.jar.JarFile;
 
 import me.kevinthorne.MQTTBlocks.BlockManager;
 
-public class ComponentLoader extends MQTTComponent {
+public class ComponentLoader extends MQTTBlock {
 
   private Date started;
 
@@ -84,9 +84,9 @@ public class ComponentLoader extends MQTTComponent {
             continue;
           }
           // System.out.println("Finding component subclass");
-          Class<? extends MQTTComponent> componentClass;
+          Class<? extends MQTTBlock> componentClass;
           try {
-            componentClass = jarClass.asSubclass(MQTTComponent.class);
+            componentClass = jarClass.asSubclass(MQTTBlock.class);
           } catch (ClassCastException ex) {
             logError("Couldn't find Component subclass for " + jar.getName());
             continue;
@@ -99,7 +99,7 @@ public class ComponentLoader extends MQTTComponent {
               getParent().removeComponent(config.getName());
             }
             // System.out.print("Instantiating...");
-            MQTTComponent comp = componentClass.newInstance();
+            MQTTBlock comp = componentClass.newInstance();
             // System.out.println(" Done");
             // System.out.println("Registering...");
             getParent().addComponent(config, comp);

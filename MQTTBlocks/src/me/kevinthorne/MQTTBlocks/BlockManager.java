@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 import me.kevinthorne.MQTTBlocks.components.ComponentConfigurationFile;
 import me.kevinthorne.MQTTBlocks.components.ComponentLoader;
-import me.kevinthorne.MQTTBlocks.components.MQTTComponent;
+import me.kevinthorne.MQTTBlocks.components.MQTTBlock;
 
 public class BlockManager extends Thread {
 
@@ -24,7 +24,7 @@ public class BlockManager extends Thread {
 
   public static final File componentLocation = new File("blocks/");
 
-  private Map<String, MQTTComponent> components = new HashMap<>();
+  private Map<String, MQTTBlock> components = new HashMap<>();
   // private Map<String, Future> enabledComponents = new HashMap<>();
 
   public BlockManager() {
@@ -84,7 +84,7 @@ public class BlockManager extends Thread {
     }
   }
 
-  public void addComponent(ComponentConfigurationFile config, MQTTComponent comp) {
+  public void addComponent(ComponentConfigurationFile config, MQTTBlock comp) {
     if (components.get(config) == null) {
       comp.init(this, config);
       components.put(config.getName(), comp);
@@ -138,19 +138,19 @@ public class BlockManager extends Thread {
   }
 
 
-  public static void logError(MQTTComponent source, String log) {
+  public static void logError(MQTTBlock source, String log) {
     logger.severe("[" + source.getComponentName() + "] - " + log);
   }
 
-  public static void logInfo(MQTTComponent source, String log) {
+  public static void logInfo(MQTTBlock source, String log) {
     logger.info("[" + source.getComponentName() + "] - " + log);
   }
 
-  public static void logWarn(MQTTComponent source, String log) {
+  public static void logWarn(MQTTBlock source, String log) {
     logger.warning("[" + source.getComponentName() + "] - " + log);
   }
 
-  public static void logConfig(MQTTComponent source, String log) {
+  public static void logConfig(MQTTBlock source, String log) {
     logger.config("[" + source.getComponentName() + "] - " + log);
   }
 
@@ -158,7 +158,7 @@ public class BlockManager extends Thread {
     return logger;
   }
 
-  public Map<String, MQTTComponent> getComponents() {
+  public Map<String, MQTTBlock> getComponents() {
     return components;
   }
 

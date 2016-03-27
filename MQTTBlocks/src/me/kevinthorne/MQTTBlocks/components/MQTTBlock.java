@@ -14,7 +14,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import me.kevinthorne.MQTTBlocks.BlockManager;
 
-public abstract class MQTTComponent extends Thread implements MqttCallback {
+public abstract class MQTTBlock extends Thread implements MqttCallback {
 
   Logger logger = Logger.getLogger(BlockManager.class.getName());
 
