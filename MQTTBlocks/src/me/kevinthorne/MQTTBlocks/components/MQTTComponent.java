@@ -12,13 +12,13 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import me.kevinthorne.MQTTBlocks.ComponentManager;
+import me.kevinthorne.MQTTBlocks.BlockManager;
 
 public abstract class MQTTComponent extends Thread implements MqttCallback {
 
-  Logger logger = Logger.getLogger(ComponentManager.class.getName());
+  Logger logger = Logger.getLogger(BlockManager.class.getName());
 
-  protected ComponentManager parent;
+  protected BlockManager parent;
   protected ComponentConfigurationFile config;
   protected String name;
 
@@ -57,7 +57,7 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
     super.interrupt();
   }
 
-  public void init(ComponentManager parent, ComponentConfigurationFile config) {
+  public void init(BlockManager parent, ComponentConfigurationFile config) {
     this.config = config;
     this.parent = parent;
 
@@ -103,7 +103,7 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
       client.setCallback(this);
       running = true;
     } catch (MqttException | IllegalArgumentException e) {
-      ComponentManager.logError(this, "Fatal Error! Could not setup MQTT Client:");
+      BlockManager.logError(this, "Fatal Error! Could not setup MQTT Client:");
       e.printStackTrace();
       try {
         this.interrupt();
@@ -145,7 +145,7 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
         lastPublished.put(topic, message);
         client.publish(topic, message);
       } catch (MqttException e) {
-        ComponentManager.logError(this,
+        BlockManager.logError(this,
             "Couldn't publish message on Thread: " + getComponentName());
         e.printStackTrace();
       }
@@ -198,7 +198,7 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
   public void deliveryComplete(IMqttDeliveryToken arg0) {
   }
 
-  public ComponentManager getParent() {
+  public BlockManager getParent() {
     return parent;
   }
 
@@ -256,19 +256,19 @@ public abstract class MQTTComponent extends Thread implements MqttCallback {
   }
 
   public void logError(String log) {
-    ComponentManager.logError(this, log);
+    BlockManager.logError(this, log);
   }
 
   public void logInfo(String log) {
-    ComponentManager.logInfo(this, log);
+    BlockManager.logInfo(this, log);
   }
 
   public void logWarn(String log) {
-    ComponentManager.logWarn(this, log);
+    BlockManager.logWarn(this, log);
   }
 
   public void logConfig(String log) {
-    ComponentManager.logConfig(this, log);
+    BlockManager.logConfig(this, log);
   }
 
 }

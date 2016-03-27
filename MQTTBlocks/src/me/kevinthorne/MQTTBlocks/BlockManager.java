@@ -18,16 +18,16 @@ import me.kevinthorne.MQTTBlocks.components.ComponentConfigurationFile;
 import me.kevinthorne.MQTTBlocks.components.ComponentLoader;
 import me.kevinthorne.MQTTBlocks.components.MQTTComponent;
 
-public class ComponentManager extends Thread {
+public class BlockManager extends Thread {
 
-  private static Logger logger = Logger.getLogger(ComponentManager.class.getName());
+  private static Logger logger = Logger.getLogger(BlockManager.class.getName());
 
   public static final File componentLocation = new File("blocks/");
 
   private Map<String, MQTTComponent> components = new HashMap<>();
   // private Map<String, Future> enabledComponents = new HashMap<>();
 
-  public ComponentManager() {
+  public BlockManager() {
     logger.info("Building runtime...");
     
     logger.setUseParentHandlers(false);
@@ -134,7 +134,7 @@ public class ComponentManager extends Thread {
 
 
   public static void main(String[] args) {
-    new ComponentManager();
+    new BlockManager();
   }
 
 

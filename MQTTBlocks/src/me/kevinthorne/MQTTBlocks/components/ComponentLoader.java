@@ -7,7 +7,7 @@ import java.net.URLClassLoader;
 import java.util.Date;
 import java.util.jar.JarFile;
 
-import me.kevinthorne.MQTTBlocks.ComponentManager;
+import me.kevinthorne.MQTTBlocks.BlockManager;
 
 public class ComponentLoader extends MQTTComponent {
 
@@ -18,12 +18,12 @@ public class ComponentLoader extends MQTTComponent {
   @Override
   public void onEnable() {
     started = new Date();
-    ComponentManager.logInfo(this, "Component Loader Daemon Started");
+    BlockManager.logInfo(this, "Component Loader Daemon Started");
   }
 
   @Override
   public void onDisable() {
-    ComponentManager.logInfo(this, "Component Loader Daemon Stopped");
+    BlockManager.logInfo(this, "Component Loader Daemon Stopped");
   }
 
   public void run() {
@@ -52,7 +52,7 @@ public class ComponentLoader extends MQTTComponent {
   public void update() {
     //ComponentManager.logInfo(this, "Checking for new components...");
 
-    File[] jars = ComponentManager.componentLocation.listFiles();
+    File[] jars = BlockManager.componentLocation.listFiles();
 
     for (File jar : jars) {
       // System.out.println("[started: " + started.toString()+ "] - " + jar.getName() + " - ["+new
