@@ -14,17 +14,17 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import me.kevinthorne.MQTTBlocks.components.ComponentConfigurationFile;
-import me.kevinthorne.MQTTBlocks.components.ComponentLoader;
-import me.kevinthorne.MQTTBlocks.components.MQTTBlock;
+import me.kevinthorne.MQTTBlocks.blocks.BlockConfigurationFile;
+import me.kevinthorne.MQTTBlocks.blocks.BlockLoader;
+import me.kevinthorne.MQTTBlocks.blocks.MQTTBlock;
 
 public class BlockManager extends Thread {
 
   private static Logger logger = Logger.getLogger(BlockManager.class.getName());
 
-  public static final File componentLocation = new File("blocks/");
+  public static final File blockLocation = new File("blocks/");
 
-  private Map<String, MQTTBlock> components = new HashMap<>();
+  private Map<String, MQTTBlock> blocks = new HashMap<>();
   // private Map<String, Future> enabledComponents = new HashMap<>();
 
   public BlockManager() {
@@ -32,7 +32,7 @@ public class BlockManager extends Thread {
     
     logger.setUseParentHandlers(false);
 
-    Formatter formatter = new ComponentLogFormatter();
+    Formatter formatter = new BlockLogFormatter();
     ConsoleHandler handler = new ConsoleHandler();
     try {
       Handler fileHandler = new FileHandler("MQTTBlocks.log");
@@ -45,15 +45,15 @@ public class BlockManager extends Thread {
     logger.addHandler(handler);
     logger.info("Logger setup successful");
 
-    loadComponents();
-    logger.info(components.size() + " core component(s) successfully added");
+    loadCoreBlocks();
+    logger.info(blocks.size() + " core component(s) successfully added");
 
-    enableComponents();
-    logger.info(components.size() + " core component(s) successfully enabled");
+    enableBlocks();
+    logger.info(blocks.size() + " core component(s) successfully enabled");
 
     Runtime.getRuntime().addShutdownHook(this);
     
-    logger.info("Component Manager started successfully");
+    logger.info("Block Manager started successfully");
   }
 
   /**
@@ -61,59 +61,59 @@ public class BlockManager extends Thread {
    */
   public void run() {
     logger.info("Shutdown initiated");
-    disableComponents();
-    removeComponents();
+    disableBlocks();
+    removeBlocks();
     logger.info("Halted.");
   }
 
-  public void enableComponents() {
-    for (String compName : components.keySet()) {
-      enableComponent(compName);
+  public void enableBlocks() {
+    for (String blockName : blocks.keySet()) {
+      enableBlock(blockName);
     }
   }
 
-  public void disableComponents() {
-    for (String compName : components.keySet()) {
-      disableComponent(compName);
+  public void disableBlocks() {
+    for (String blockName : blocks.keySet()) {
+      disableBlock(blockName);
     }
   }
 
-  public void removeComponents() {
-    for (String compName : components.keySet()) {
-      removeComponent(compName);
+  public void removeBlocks() {
+    for (String blockName : blocks.keySet()) {
+      removeBlock(blockName);
     }
   }
 
-  public void addComponent(ComponentConfigurationFile config, MQTTBlock comp) {
-    if (components.get(config) == null) {
-      comp.init(this, config);
-      components.put(config.getName(), comp);
+  public void addBlock(BlockConfigurationFile config, MQTTBlock block) {
+    if (blocks.get(config) == null) {
+      block.init(this, config);
+      blocks.put(config.getName(), block);
     } else {
-      logger.severe("Could not add " + config.getName() + ": Component already exists!");
+      logger.severe("Could not add " + config.getName() + ": Block already exists!");
     }
   }
 
-  public void enableComponent(String name) {
+  public void enableBlock(String name) {
     try {
-      components.get(name).start();
+      blocks.get(name).start();
     } catch (Exception e) {
-      logger.severe("Component: " + name + " could not be enabled, removing.");
+      logger.severe("Block: " + name + " could not be enabled, removing.");
       e.printStackTrace();
     }
   }
 
-  public void disableComponent(String name) {
+  public void disableBlock(String name) {
     try {
-      components.get(name).interrupt();
+      blocks.get(name).interrupt();
     } catch (Exception e) {
-      logger.severe("Component: " + name + " could not be disabled, removing.");
+      logger.severe("Block: " + name + " could not be disabled, removing.");
       e.printStackTrace();
     }
   }
 
-  public void removeComponent(String name) {
+  public void removeBlock(String name) {
     try {
-      components.remove(name);
+      blocks.remove(name);
     } catch (Exception ignored) {
 
     }
@@ -124,12 +124,12 @@ public class BlockManager extends Thread {
    * config.properties and that extends MQTTComponent
    * 
    */
-  public void loadComponents() {
-    if (!componentLocation.exists())
-      componentLocation.mkdirs();
+  public void loadCoreBlocks() {
+    if (!blockLocation.exists())
+      blockLocation.mkdirs();
 
-    addComponent(new ComponentConfigurationFile("ComponentLoader", null, null, null, 2, null, null,
-        null, null, 10), new ComponentLoader());
+    addBlock(new BlockConfigurationFile("ComponentLoader", null, null, null, 2, null, null,
+        null, null, 10), new BlockLoader());
   }
 
 
@@ -139,30 +139,30 @@ public class BlockManager extends Thread {
 
 
   public static void logError(MQTTBlock source, String log) {
-    logger.severe("[" + source.getComponentName() + "] - " + log);
+    logger.severe("[" + source.getBlockName() + "] - " + log);
   }
 
   public static void logInfo(MQTTBlock source, String log) {
-    logger.info("[" + source.getComponentName() + "] - " + log);
+    logger.info("[" + source.getBlockName() + "] - " + log);
   }
 
   public static void logWarn(MQTTBlock source, String log) {
-    logger.warning("[" + source.getComponentName() + "] - " + log);
+    logger.warning("[" + source.getBlockName() + "] - " + log);
   }
 
   public static void logConfig(MQTTBlock source, String log) {
-    logger.config("[" + source.getComponentName() + "] - " + log);
+    logger.config("[" + source.getBlockName() + "] - " + log);
   }
 
   public Logger getLogger() {
     return logger;
   }
 
-  public Map<String, MQTTBlock> getComponents() {
-    return components;
+  public Map<String, MQTTBlock> getBlocks() {
+    return blocks;
   }
 
-  public static class ComponentLogFormatter extends Formatter {
+  public static class BlockLogFormatter extends Formatter {
     //
     // Create a DateFormat to format the logger timestamp.
     //

@@ -1,4 +1,4 @@
-package me.kevinthorne.MQTTBlocks.components;
+package me.kevinthorne.MQTTBlocks.blocks;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ public abstract class MQTTBlock extends Thread implements MqttCallback {
   Logger logger = Logger.getLogger(BlockManager.class.getName());
 
   protected BlockManager parent;
-  protected ComponentConfigurationFile config;
+  protected BlockConfigurationFile config;
   protected String name;
 
   private String[] topics;
@@ -57,7 +57,7 @@ public abstract class MQTTBlock extends Thread implements MqttCallback {
     super.interrupt();
   }
 
-  public void init(BlockManager parent, ComponentConfigurationFile config) {
+  public void init(BlockManager parent, BlockConfigurationFile config) {
     this.config = config;
     this.parent = parent;
 
@@ -146,7 +146,7 @@ public abstract class MQTTBlock extends Thread implements MqttCallback {
         client.publish(topic, message);
       } catch (MqttException e) {
         BlockManager.logError(this,
-            "Couldn't publish message on Thread: " + getComponentName());
+            "Couldn't publish message on Thread: " + getBlockName());
         e.printStackTrace();
       }
     }
@@ -202,11 +202,11 @@ public abstract class MQTTBlock extends Thread implements MqttCallback {
     return parent;
   }
 
-  public ComponentConfigurationFile getConfig() {
+  public BlockConfigurationFile getConfig() {
     return config;
   }
 
-  public String getComponentName() {
+  public String getBlockName() {
     return name;
   }
 

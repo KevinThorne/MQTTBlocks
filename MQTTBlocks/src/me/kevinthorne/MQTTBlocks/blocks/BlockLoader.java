@@ -1,4 +1,4 @@
-package me.kevinthorne.MQTTBlocks.components;
+package me.kevinthorne.MQTTBlocks.blocks;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.util.jar.JarFile;
 
 import me.kevinthorne.MQTTBlocks.BlockManager;
 
-public class ComponentLoader extends MQTTBlock {
+public class BlockLoader extends MQTTBlock {
 
   private Date started;
 
@@ -18,12 +18,12 @@ public class ComponentLoader extends MQTTBlock {
   @Override
   public void onEnable() {
     started = new Date();
-    BlockManager.logInfo(this, "Component Loader Daemon Started");
+    BlockManager.logInfo(this, "Block Loader Daemon Started");
   }
 
   @Override
   public void onDisable() {
-    BlockManager.logInfo(this, "Component Loader Daemon Stopped");
+    BlockManager.logInfo(this, "Block Loader Daemon Stopped");
   }
 
   public void run() {
@@ -52,7 +52,7 @@ public class ComponentLoader extends MQTTBlock {
   public void update() {
     //ComponentManager.logInfo(this, "Checking for new components...");
 
-    File[] jars = BlockManager.componentLocation.listFiles();
+    File[] jars = BlockManager.blockLocation.listFiles();
 
     for (File jar : jars) {
       // System.out.println("[started: " + started.toString()+ "] - " + jar.getName() + " - ["+new
@@ -63,7 +63,7 @@ public class ComponentLoader extends MQTTBlock {
         // System.out.println("Found jar file after start date, adding");
         try {
           JarFile jarFile = new JarFile(jar);
-          ComponentConfigurationFile config = new ComponentConfigurationFile(
+          BlockConfigurationFile config = new BlockConfigurationFile(
               jarFile.getInputStream(jarFile.getJarEntry("config.properties")));
 
           // System.out.println("Loaded config");
@@ -75,10 +75,10 @@ public class ComponentLoader extends MQTTBlock {
           try {
             jarClass = Class.forName(config.getMain(), true, cl);
           } catch (ClassNotFoundException ex) {
-            logError("Couldn't find main for " + jar.getName() + " reload");
+            logError("Couldn't find main for \"" + jar.getName() + "\" reload");
             continue;
           } catch (NullPointerException ne) {
-            logError("Couldn't find main for " + jar.getName() + " reload");
+            logError("Couldn't find main for \"" + jar.getName() + "\" reload");
             logError("\tconfig Main Method: " + config.getMain());
             logError("\tClass Loader: " + cl);
             continue;
@@ -93,20 +93,20 @@ public class ComponentLoader extends MQTTBlock {
           }
           // System.out.println("Instantiating and registering");
           try {
-            if (getParent().getComponents().containsKey(config.getName())) {
+            if (getParent().getBlocks().containsKey(config.getName())) {
               // System.out.println("Removing Old Component...");
-              getParent().disableComponent(config.getName());
-              getParent().removeComponent(config.getName());
+              getParent().disableBlock(config.getName());
+              getParent().removeBlock(config.getName());
             }
             // System.out.print("Instantiating...");
             MQTTBlock comp = componentClass.newInstance();
             // System.out.println(" Done");
             // System.out.println("Registering...");
-            getParent().addComponent(config, comp);
-            getParent().enableComponent(config.getName());
-            logInfo("Enabled new component " + config.getName());
+            getParent().addBlock(config, comp);
+            getParent().enableBlock(config.getName());
+            logInfo("Enabled new block \"" + config.getName() + "\"");
           } catch (InstantiationException | IllegalAccessException e1) {
-            logError("Couldn't instantiate " + jar.getName());
+            logError("Couldn't instantiate \"" + jar.getName() + "\"");
             e1.printStackTrace();
             continue;
           }

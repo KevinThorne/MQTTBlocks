@@ -1,11 +1,11 @@
-package me.kevinthorne.MQTTBlocks.components;
+package me.kevinthorne.MQTTBlocks.blocks;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Properties;
 
-public class ComponentConfigurationFile {
+public class BlockConfigurationFile {
 
   private final String NO_SUB = "nosub:";
 
@@ -30,7 +30,7 @@ public class ComponentConfigurationFile {
    * @param stream
    * @throws IOException
    */
-  public ComponentConfigurationFile(final InputStream stream) throws IOException {
+  public BlockConfigurationFile(final InputStream stream) throws IOException {
     properties = new Properties();
     properties.load(stream);
     load(properties);
@@ -48,7 +48,7 @@ public class ComponentConfigurationFile {
    * @param broker
    * @param clientId
    */
-  public ComponentConfigurationFile(String name, String description, String main, String[] topics,
+  public BlockConfigurationFile(String name, String description, String main, String[] topics,
       int qos, String broker, String username, String password, String clientId, int updateWait) {
     this.name = name;
     this.description = description;
