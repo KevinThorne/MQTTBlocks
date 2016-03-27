@@ -78,6 +78,8 @@ public class ComponentConfigurationFile {
   }
 
   private void sortTopics(String[] topics) {
+    if (topics == null)
+      return;
     ArrayList<String> subscribeOnly = new ArrayList<String>();
     ArrayList<String> publishOnly = new ArrayList<String>();
     for (String topic : topics) {
@@ -87,8 +89,10 @@ public class ComponentConfigurationFile {
       } else
         subscribeOnly.add(topic);
     }
-    this.subscribedTopics = subscribeOnly.toArray(subscribedTopics);
-    this.publishedTopics = publishOnly.toArray(publishedTopics);
+    if (!subscribeOnly.isEmpty())
+      this.subscribedTopics = subscribeOnly.toArray(new String[0]);
+    if (!publishOnly.isEmpty())
+      this.publishedTopics = publishOnly.toArray(new String[0]);
   }
 
   public String getName() {
