@@ -9,7 +9,7 @@ import me.kevinthorne.MQTTBlocks.BlockManager;
 import me.kevinthorne.MQTTBlocks.blocks.BlockConfigurationFile;
 import me.kevinthorne.MQTTBlocks.blocks.MQTTBlock;
 
-public class AddRemoveCoreBlockTest {
+public class CoreBlockManagerTest {
 
   private static BlockManager blockManager;
 
