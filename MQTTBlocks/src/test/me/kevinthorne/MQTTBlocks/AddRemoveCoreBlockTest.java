@@ -1,4 +1,4 @@
-package test.me.kevinthorne.MQTTBlocks.components;
+package test.me.kevinthorne.MQTTBlocks;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
