@@ -130,9 +130,4 @@ public class BlockLoader extends MQTTBlock {
     return true;
   }
 
-  @Override
-  public int getSleepTime() {
-    return 20;
-  }
-
 }

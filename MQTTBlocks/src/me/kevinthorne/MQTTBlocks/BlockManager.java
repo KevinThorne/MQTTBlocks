@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
@@ -55,11 +56,15 @@ public class BlockManager extends Thread {
     
     logger.info("Block Manager started successfully");
   }
+  
+  public void run() {
+    shutdown();
+  }
 
   /**
    * OnShutdown event
    */
-  public void run() {
+  public void shutdown() {
     logger.info("Shutdown initiated");
     disableBlocks();
     removeBlocks();
@@ -79,8 +84,12 @@ public class BlockManager extends Thread {
   }
 
   public void removeBlocks() {
-    for (String blockName : blocks.keySet()) {
-      removeBlock(blockName);
+    Iterator<String> blockKeysIter = blocks.keySet().iterator();
+    while (blockKeysIter.hasNext()) {
+      String blockName = blockKeysIter.next();
+      
+      //removeBlock(blockName);
+      blockKeysIter.remove();
     }
   }
 

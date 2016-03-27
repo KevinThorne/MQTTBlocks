@@ -1,5 +1,6 @@
 package me.kevinthorne.MQTTBlocks.blocks;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -48,10 +49,13 @@ public abstract class MQTTBlock extends Thread implements MqttCallback {
       try {
         client.disconnectForcibly();
         client.close();
-      } catch (Exception ignored) {
+        logWarn("Stack Trace for forced connection close:");
+        e.printStackTrace();
+      } catch (MqttException ignored) {
+      } catch (NullPointerException e1) {
+        logInfo("No client was ever created");
       }
-      logWarn("Stack Trace for forced connection close:");
-      e.printStackTrace();
+      
     }
 
     super.interrupt();
