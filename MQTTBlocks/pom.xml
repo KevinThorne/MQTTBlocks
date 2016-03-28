@@ -5,9 +5,9 @@
 	<artifactId>MQTTBlocks</artifactId>
 	<version>1.0</version>
 
-	<name>MQTTComponents</name>
+	<name>MQTTBlocks</name>
 	<description>This small, modular, Apache-licensed application provides a simple framework to subscribe and publish on topics on any Paho-supported MQTT broker.</description>
-	<url>https://thedigitalnative.space/projects/mqttcomponents/</url>
+	<url>https://thedigitalnative.space/projects/mqttblocks/</url>
 
 	<licenses>
 		<license>
@@ -25,6 +25,15 @@
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>false</downloadJavadocs>
+				</configuration>
+			</plugin>
+			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.3</version>
 				<configuration>
@@ -35,30 +44,12 @@
 		</plugins>
 	</build>
 
-<!-- 	<repositories> -->
-<!-- 		<repository> -->
-<!-- 			<id>bintray</id> -->
-<!-- 			<url>http://dl.bintray.com/andsel/maven/</url> -->
-<!-- 			<releases> -->
-<!-- 				<enabled>true</enabled> -->
-<!-- 			</releases> -->
-<!-- 			<snapshots> -->
-<!-- 				<enabled>false</enabled> -->
-<!-- 			</snapshots> -->
-<!-- 		</repository> -->
-<!-- 	</repositories> -->
-
 	<dependencies>
 		<dependency>
 			<groupId>org.eclipse.paho</groupId>
 			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
 			<version>1.0.2</version>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>io.moquette</groupId> -->
-<!-- 			<artifactId>moquette-broker</artifactId> -->
-<!-- 			<version>0.8</version> -->
-<!-- 		</dependency> -->
 	</dependencies>
 
 </project>

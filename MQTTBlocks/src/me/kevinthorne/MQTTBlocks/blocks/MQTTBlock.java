@@ -1,6 +1,5 @@
 package me.kevinthorne.MQTTBlocks.blocks;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -20,7 +19,7 @@ public abstract class MQTTBlock extends Thread implements MqttCallback {
   Logger logger = Logger.getLogger(BlockManager.class.getName());
 
   protected BlockManager parent;
-  protected BlockConfigurationFile blockConfig;
+  private BlockConfigurationFile blockConfig;
   protected String name;
 
   private String[] topics;

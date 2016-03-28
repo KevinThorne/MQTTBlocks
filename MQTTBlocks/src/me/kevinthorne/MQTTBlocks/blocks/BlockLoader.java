@@ -27,7 +27,7 @@ public class BlockLoader extends MQTTBlock {
   }
 
   public void run() {
-    this.name = config.getName();
+    this.name = getBlockConfig().getName();
     try {
       onEnable();
       setRunning(true);
@@ -50,7 +50,7 @@ public class BlockLoader extends MQTTBlock {
 
   @Override
   public void update() {
-    //ComponentManager.logInfo(this, "Checking for new components...");
+    // ComponentManager.logInfo(this, "Checking for new components...");
 
     File[] jars = BlockManager.blockLocation.listFiles();
 
@@ -63,8 +63,14 @@ public class BlockLoader extends MQTTBlock {
         // System.out.println("Found jar file after start date, adding");
         try {
           JarFile jarFile = new JarFile(jar);
-          BlockConfigurationFile config = new BlockConfigurationFile(
-              jarFile.getInputStream(jarFile.getJarEntry("config.properties")));
+          BlockConfigurationFile config;
+          try {
+             config = new BlockConfigurationFile(
+                jarFile.getInputStream(jarFile.getJarEntry("config.properties")));
+          } catch (NullPointerException ne) {
+            logError("Couldn't find config.properties for \"" + jar.getName() + "\"");
+            continue;
+          }
 
           // System.out.println("Loaded config");
 
