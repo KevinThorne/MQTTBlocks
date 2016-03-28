@@ -20,7 +20,7 @@ public abstract class MQTTBlock extends Thread implements MqttCallback {
   Logger logger = Logger.getLogger(BlockManager.class.getName());
 
   protected BlockManager parent;
-  protected BlockConfigurationFile config;
+  protected BlockConfigurationFile blockConfig;
   protected String name;
 
   private String[] topics;
@@ -62,7 +62,7 @@ public abstract class MQTTBlock extends Thread implements MqttCallback {
   }
 
   public void init(BlockManager parent, BlockConfigurationFile config) {
-    this.config = config;
+    this.blockConfig = config;
     this.parent = parent;
 
     this.name = config.getName();
@@ -96,12 +96,12 @@ public abstract class MQTTBlock extends Thread implements MqttCallback {
       client = new MqttClient(broker, clientId, persistence);
       MqttConnectOptions connOpts = new MqttConnectOptions();
       connOpts.setCleanSession(true);
-      if (config.getUsername() != null && !config.getUsername().equals(""))
-        connOpts.setUserName(config.getUsername());
-      if (config.getPassword() != null && !config.getPassword().equals(""))
-        connOpts.setPassword(config.getPassword());
+      if (blockConfig.getUsername() != null && !blockConfig.getUsername().equals(""))
+        connOpts.setUserName(blockConfig.getUsername());
+      if (blockConfig.getPassword() != null && !blockConfig.getPassword().equals(""))
+        connOpts.setPassword(blockConfig.getPassword());
       client.connect(connOpts);
-      for (String topic : config.getSubscribedTopics()) {
+      for (String topic : blockConfig.getSubscribedTopics()) {
         client.subscribe(topic);
       }
       client.setCallback(this);
@@ -206,8 +206,8 @@ public abstract class MQTTBlock extends Thread implements MqttCallback {
     return parent;
   }
 
-  public BlockConfigurationFile getConfig() {
-    return config;
+  public BlockConfigurationFile getBlockConfig() {
+    return blockConfig;
   }
 
   public String getBlockName() {
@@ -248,7 +248,7 @@ public abstract class MQTTBlock extends Thread implements MqttCallback {
    * @return int <strong>seconds</strong>
    */
   public int getSleepTime() {
-    return config.getUpdateWait();
+    return blockConfig.getUpdateWait();
   }
 
   public boolean isRunning() {
