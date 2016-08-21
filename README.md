@@ -26,11 +26,11 @@ updateWait=10
 
 ##### Configuration Details
 This will simply explain what each field in the configuration files are for.
-- ```name``` - Defines the name of your component, you will see this in log files mostly.
-- ```description``` - Explains what your component does for others to read.
-- ```main``` - Full package name where your MQTTComponent class is located.
-- ```topic``` - One or more topics to automatically be subscribed to on component startup.
-- ```qos``` - Sets the default QoS for any messages sent out by your component.
+- ```name``` - Defines the name of your block, you will see this in log files mostly.
+- ```description``` - Explains what your block does for others to read.
+- ```main``` - Full package name where your MQTTBlock class is located.
+- ```topic``` - One or more topics to automatically be subscribed to on block startup.
+- ```qos``` - Sets the default QoS for any messages sent out by your block.
 - ```broker``` - The url read by Eclipse Paho to set up the MQTTClient in your Component.
 - ```clientId``` - Client identification.
 - ```username``` - Username for the connection.
@@ -75,15 +75,15 @@ public class TestBlock extends MQTTBlock {
 ```
 ###### Block Class API
 Here's what each of them do and when they are ran:
-- ```onEnable``` - called when the component is enabled by the Component Manager. The MqttClient is instantiated by this point; any more customization of the Client object can be made here safely.
+- ```onEnable``` - called when the component is enabled by the Block Manager. The MqttClient is instantiated by this point; any more customization of the Client object can be made here safely.
 - ```onDisable``` - do any cleanup here.
 - ```update``` - Called every x seconds where x is the ```updateWait``` setting.
 - ```onMessageReceived``` - Called every time a message is received on any of the subscribed topics (both set in the configuration and any you subscribe to in onEnable or anywhere else.
 
 There are a couple of other methods that the [```MQTTBlock```](https://github.com/KevinThorne/MQTTBlocks/blob/master/MQTTBlocks/src/me/kevinthorne/MQTTBlocks/blocks/MQTTBlock.java) class implements, most of which can be overridden in your code:
 - ```publish(String topic, String message)``` - This will publish any given message to any given topic to the broker.
-- ```init(ComponentManager parent, ComponentConfigurationFile config)``` - Component Loader calls this to initialize the class. **Do not override**
-- ```run()``` - This is the lifeline of each component. **Do not override either.** Doing so will kill your component's lifecycle and potentially the entire application.
+- ```init(BlockManager parent, BlockConfigurationFile config)``` - Block Loader calls this to initialize the class. **Do not override**
+- ```run()``` - This is the lifeline of each component. **Do not override either.** Doing so will kill your block's lifecycle and potentially the entire application.
 - The ```MqttCallback``` are also implemented in the [```MQTTBlock```](https://github.com/KevinThorne/MQTTBlocks/blob/master/MQTTBlocks/src/me/kevinthorne/MQTTBlocks/blocks/MQTTBlock.java) class:
   - ```messageArrived(String topic, MqttMessage message)``` - This is the parent method of ```onMessageReceived```. This is really what the MqttClient object calls when a message is received. However, further knowledge of Eclipse Paho is needed.
   - ```connectionLost(Throwable cause)``` - Closes down the component by default.
